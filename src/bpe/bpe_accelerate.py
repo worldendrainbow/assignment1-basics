@@ -1,13 +1,6 @@
-#An example of bpe
 
-
-# text="""low low low low low
-# lower lower widest widest widest
-# newest newest newest newest newest newest"""
-# text="""abab"""
 from collections import Counter
 import regex as re
-import os
 
 
 #Training
@@ -63,7 +56,7 @@ def train(counter,Merge_round,vocabulary):
         merge_pair.append(best_pair)
         counter,pair_cnt=merge(counter,merge_pair[-1],pair_cnt)
         vocabulary.append(merge_pair[-1][0]+merge_pair[-1][1])
-        # print(counter)
+
     return merge_pair
 
 def main(input_path,vocab_size,Special_tokens):
@@ -87,7 +80,7 @@ def main(input_path,vocab_size,Special_tokens):
     vocab_ret={}
     for i in range(len(vocabulary)):
         vocab_ret[i]=vocabulary[i]
-    return tuple(vocab_ret,merge_pair)
+    return (vocab_ret,merge_pair)
 
 
 if __name__=="__main__":
