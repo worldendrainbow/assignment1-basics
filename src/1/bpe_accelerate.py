@@ -8,12 +8,11 @@
 from collections import Counter
 import regex as re
 
-Merge_round=10
+Merge_round=10000-256-1
 Special_tokens=["<|endoftext|>"]
 
 vacabulary=[bytes([byte]) for byte in range(256)] + [bytes(Special_token.encode("utf-8")) for Special_token in Special_tokens]
 merge_pair=[]
-
 
 
 
@@ -74,18 +73,18 @@ def train(counter):
 def main():
     counter=Counter()
     PAT = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
-
-
-    
     with open('C:\\Users\\Kai_Admin\\Desktop\\assignment1-basics\\data\\debug\\chunk0_outof_100.txt','rb') as text:
-        # pre_tokenized_text=text.read().decode("utf-8").split()
-        pre_tokenized_text=re.findall(PAT,text.read().decode("utf-8"))
-    for pretoken in pre_tokenized_text:
-        key=tuple(bytes([c]) for c in pretoken.encode("utf-8"))
-        counter[key]+=1
+        content=text.read().decode("utf-8")
+    special_pattern = '|'.join(re.escape(token) for token in Special_tokens)
+    for segment in re.split(special_pattern, content):
+        for match in re.finditer(PAT, segment):
+            pretoken=tuple(bytes([b]) for b in match.group(0).encode("utf-8"))
+            # print(pretoken)
+            counter[pretoken]+=1
     train(counter)
-    print(merge_pair)
-    # print(vacabulary)
+    # print(merge_pair)
+    with open('C:\\Users\\Kai_Admin\\Desktop\\assignment1-basics\\data\\debug\\chunk0_output.txt','w') as output:
+        output.write(str(vacabulary))
 
 if __name__=="__main__":
     main()
