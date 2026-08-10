@@ -1,5 +1,5 @@
 import regex as re
-import bpe_accelerate
+import bpe_multipro
 import os
 from multiprocessing import Pool,Process
 import pickle
@@ -8,18 +8,14 @@ import pickle
 
 input_path='data/processed'
 output_dir='data/processed/output'
-vocab_size=300
+vocab_size=10000
 special_tokens=["<|endoftext|>"]
-num_workers=4
+num_workers=8
 chunk_size=128
-
-def worker(input_path,output_dir,vocab_size,special_tokens,chunk_id):
-    with open(f'{output_dir}/chunk{chunk_id}.pkl','wb') as f:
-        vocab,merge_pair=bpe_accelerate.main(f'{input_path}/chunk{chunk_id}_outof_128.txt',vocab_size,special_tokens)
-        pickle.dump((vocab,merge_pair),f)
 
 if __name__ == '__main__':
     os.makedirs(output_dir,exist_ok=True)
     assert chunk_size>0 and num_workers>0
-    with Pool(processes=num_workers) as pool:
-        pool.starmap(worker, [(input_path, output_dir, vocab_size, special_tokens, chunk_id) for chunk_id in range(chunk_size)])
+    vocab, merge_pair = bpe_multipro.main(input_path, chunk_size, num_workers, vocab_size, special_tokens)
+    pickle.dump(vocab, open(os.path.join(output_dir, 'vocab.pkl'), 'wb'))
+    pickle.dump(merge_pair, open(os.path.join(output_dir, 'merge_pair.pkl'), 'wb'))
