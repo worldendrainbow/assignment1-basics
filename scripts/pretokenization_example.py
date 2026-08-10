@@ -59,9 +59,9 @@ with open('C:\\Users\\Kai_Admin\\Desktop\\assignment1-basics\\data\\raw\\TinySto
     chunk_cnt = 0
     for start, end in zip(boundaries[:-1], boundaries[1:]):
         f.seek(start)
-        with open(f'C:\\Users\\Kai_Admin\\Desktop\\assignment1-basics\\data\\debug\\chunk0_outof_100.txt', 'wb') as chunk_file:
+        with open(f'data\\processed\\chunk{chunk_cnt}_outof_{num_processes}.txt', 'wb') as chunk_file:
             chunk = f.read(end - start).decode("utf-8", errors="ignore")
             chunk_file.write(chunk.encode("utf-8"))
         chunk_cnt += 1
-        break  # Remove this break to process all chunks, currently only processes the first chunk
+        # break  # Remove this break to process all chunks, currently only processes the first chunk
         # Run pre-tokenization on your chunk and store the counts for each pre-token
