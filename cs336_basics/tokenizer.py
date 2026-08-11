@@ -35,6 +35,9 @@ class Tokenizer:
             sorted_spec=sorted(self.special_tokens,key=len,reverse=True)
             special_pattern = '('+'|'.join(re.escape(token) for token in sorted_spec)+')'
             for segment in re.split(special_pattern, text):
+                if segment in sorted_spec:
+                    tokens.append((bytes(segment.encode('utf-8')),))
+                    continue
                 for match in re.finditer(PAT, segment):
                     tokens.append(tuple(bytes([b]) for b in match.group(0).encode("utf-8")))
         else:
@@ -71,7 +74,7 @@ class Tokenizer:
         ret=bytes([])
         for id in ids:
             ret=ret+self.vocab[id]
-        return ret.decode("utf-8")
+        return ret.decode("utf-8",errors='replace')
         # return [self.vocab[id].decode("utf-8") for id in ids]
     
 
@@ -80,5 +83,6 @@ if __name__=='__main__':
     merges_filepath='data/processed/output/merge_pair.pkl'
     special_tokens=['<|endoftext|>']
     T=Tokenizer.from_files(vocab_filepath,merges_filepath,special_tokens)
-    text="""I love kitty!"""
+    text="""<|endoftext|>"""
+    # text = """I love kitty!"""
     print(T.encode(text))
