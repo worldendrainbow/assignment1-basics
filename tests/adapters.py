@@ -12,6 +12,7 @@ import cs336_basics.bpe_accelerate
 import cs336_basics.tokenizer
 import cs336_basics.linear_and_embedding
 import cs336_basics.rmsnorm
+import cs336_basics.positionwise_feedforward
 def run_linear(
     d_in: int,
     d_out: int,
@@ -66,6 +67,9 @@ def run_swiglu(
     w3_weight: Float[Tensor, " d_ff d_model"],
     in_features: Float[Tensor, " ... d_model"],
 ) -> Float[Tensor, " ... d_model"]:
+    model=cs336_basics.positionwise_feedforward.SwiGLU(d_model,d_ff)
+    model.load_state_dict({"W1.W":w1_weight,"W2.W":w2_weight,"W3.W":w3_weight})
+    return model.FFN(in_features)
     """Given the weights of a SwiGLU network, return
     the output of your implementation with these weights.
 
@@ -87,7 +91,6 @@ def run_swiglu(
     # swiglu.w1.weight.data = w1_weight
     # swiglu.w2.weight.data = w2_weight
     # swiglu.w3.weight.data = w3_weight
-    raise NotImplementedError
 
 
 def run_scaled_dot_product_attention(
