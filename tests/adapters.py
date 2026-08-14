@@ -8,11 +8,7 @@ import numpy.typing as npt
 import torch
 from jaxtyping import Bool, Float, Int
 from torch import Tensor
-import cs336_basics.bpe_accelerate
-import cs336_basics.tokenizer
-import cs336_basics.linear_and_embedding
-import cs336_basics.rmsnorm
-import cs336_basics.positionwise_feedforward
+import cs336_basics
 def run_linear(
     d_in: int,
     d_out: int,
@@ -195,6 +191,8 @@ def run_rope(
     in_query_or_key: Float[Tensor, " ... sequence_length d_k"],
     token_positions: Int[Tensor, " ... sequence_length"],
 ) -> Float[Tensor, " ... sequence_length d_k"]:
+    model=cs336_basics.rope.RotaryPositionalEmbedding(theta,d_k,max_seq_len)
+    return model.forward(in_query_or_key,token_positions)
     """
     Run RoPE for a given input tensor.
 
@@ -207,7 +205,6 @@ def run_rope(
     Returns:
         Float[Tensor, " ... sequence_length d_k"]: Tensor with RoPEd input.
     """
-    raise NotImplementedError
 
 
 def run_transformer_block(
