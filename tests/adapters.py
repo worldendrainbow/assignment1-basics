@@ -425,10 +425,11 @@ def run_get_batch(
 
 
 def run_softmax(in_features: Float[Tensor, " ..."], dim: int) -> Float[Tensor, " ..."]:
+    return cs336_basics.softmax.softmax(in_features,dim)
     """
     Given a tensor of inputs, return the output of softmaxing the given `dim`
     of the input.
-
+    
     Args:
         in_features (Float[Tensor, "..."]): Input features to softmax. Shape is arbitrary.
         dim (int): Dimension of the `in_features` to apply softmax to.
@@ -437,7 +438,6 @@ def run_softmax(in_features: Float[Tensor, " ..."], dim: int) -> Float[Tensor, "
         Float[Tensor, "..."]: Tensor of with the same shape as `in_features` with the output of
         softmax normalizing the specified `dim`.
     """
-    raise NotImplementedError
 
 
 def run_cross_entropy(
