@@ -95,6 +95,7 @@ def run_scaled_dot_product_attention(
     V: Float[Tensor, " ... keys d_v"],
     mask: Bool[Tensor, " ... queries keys"] | None = None,
 ) -> Float[Tensor, " ... queries d_v"]:
+    return cs336_basics.scaled_dot_product_attention.scaled_dot_product_attention(Q,K,V,mask)
     """
     Given key (K), query (Q), and value (V) tensors, return
     the output of your scaled dot product attention implementation.
@@ -107,8 +108,6 @@ def run_scaled_dot_product_attention(
     Returns:
         Float[Tensor, " ... queries d_v"]: Output of SDPA
     """
-    raise NotImplementedError
-
 
 def run_multihead_self_attention(
     d_model: int,
