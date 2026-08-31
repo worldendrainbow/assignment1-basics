@@ -118,6 +118,10 @@ def run_multihead_self_attention(
     o_proj_weight: Float[Tensor, " d_model d_model"],
     in_features: Float[Tensor, " ... sequence_length d_model"],
 ) -> Float[Tensor, " ... sequence_length d_model"]:
+    model = cs336_basics.multihead_self_attention.Multihead_self_attention_no_rope(d_model,num_heads)
+    model.load_state_dict({"qw.W":q_proj_weight,"kw.W":k_proj_weight,"vw.W":v_proj_weight,"ow.W":o_proj_weight})
+    
+    return model.multihead_self_attention_no_rope(in_features)
     """
     Given the key, query, and value projection weights of a naive unbatched
     implementation of multi-head attention, return the output of an optimized batched
@@ -155,6 +159,10 @@ def run_multihead_self_attention_with_rope(
     in_features: Float[Tensor, " ... sequence_length d_model"],
     token_positions: Int[Tensor, " ... sequence_length"] | None = None,
 ) -> Float[Tensor, " ... sequence_length d_model"]:
+    model = cs336_basics.multihead_self_attention.Multihead_self_attention(d_model,num_heads,theta,max_seq_len)
+    model.load_state_dict({"qw.W":q_proj_weight,"kw.W":k_proj_weight,"vw.W":v_proj_weight,"ow.W":o_proj_weight})
+
+    return model.multihead_self_attention(in_features,token_positions)
     """
     Given the key, query, and value projection weights of a naive unbatched
     implementation of multi-head attention, return the output of an optimized batched

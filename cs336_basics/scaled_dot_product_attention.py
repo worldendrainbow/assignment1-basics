@@ -6,8 +6,9 @@ import math
 def scaled_dot_product_attention(Q,K,V,mask=None):
     d_k=Q.shape[-1]
     presoft=einsum(Q,K,"... q_len dk,... k_len dk->... q_len k_len")/math.sqrt(d_k)
-    t_inf=torch.where(mask,0.,-torch.inf)
-    presoft=presoft+t_inf
+    if(mask is not None):
+        t_inf=torch.where(mask,0.,-torch.inf)
+        presoft=presoft+t_inf
     softed=softmax(presoft,-1)
     return einsum(softed,V,"... q_len k_len,... k_len d_v->... q_len d_v")
 if __name__=='__main__':
