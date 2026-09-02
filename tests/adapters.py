@@ -223,6 +223,23 @@ def run_transformer_block(
     weights: dict[str, Tensor],
     in_features: Float[Tensor, " batch sequence_length d_model"],
 ) -> Float[Tensor, " batch sequence_length d_model"]:
+    
+    transblock=cs336_basics.transform_block.Transformer_block(d_model,num_heads,d_ff,theta,max_seq_len)
+
+    transblock.attn=cs336_basics.multihead_self_attention.Multihead_self_attention(d_model,num_heads,theta,max_seq_len)
+    transblock.attn.load_state_dict({"qw.W":weights["attn.q_proj.weight"],
+                          "kw.W":weights["attn.k_proj.weight"],
+                          "vw.W":weights["attn.v_proj.weight"],
+                          "ow.W":weights["attn.output_proj.weight"]})
+    
+    transblock.norm1.load_state_dict({"G":weights["ln1.weight"]})
+    transblock.norm2.load_state_dict({"G":weights["ln2.weight"]})
+    
+    transblock.swiglu.load_state_dict({"W1.W":weights["ffn.w1.weight"],
+                                       "W2.W":weights["ffn.w2.weight"],
+                                       "W3.W":weights["ffn.w3.weight"]})
+    return transblock.forward(in_features)
+    
     """
     Given the weights of a pre-norm Transformer block and input features,
     return the output of running the Transformer block on the input features.

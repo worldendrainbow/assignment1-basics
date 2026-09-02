@@ -20,6 +20,8 @@ class SwiGLU(nn.Module):
         w3x = self.W3.forward(x)
         t=SwiGLU.SiLU(w1x)*w3x
         return self.W2.forward(t)
+    def forward(self,x):
+        return self.FFN(x)
     
 if __name__=='__main__':
     pass
