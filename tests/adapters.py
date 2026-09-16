@@ -301,7 +301,7 @@ def run_transformer_block(
         Float[Tensor, "batch sequence_length d_model"] Tensor with the output of
         running the Transformer block on the input features while using RoPE.
     """
-    raise NotImplementedError
+    
 
 
 def run_transformer_lm(
@@ -315,6 +315,21 @@ def run_transformer_lm(
     weights: dict[str, Tensor],
     in_indices: Int[Tensor, " batch_size sequence_length"],
 ) -> Float[Tensor, " batch_size sequence_length vocab_size"]:
+    translm=cs336_basics.transform_lm.Transformer_lm(vocab_size,context_length,d_model,num_layers,num_heads,d_ff,rope_theta)
+    translm.embedding.load_state_dict({"W":weights["token_embeddings.weight"]})
+    for _ in range(num_layers):
+        translm.layers[_].attn.load_state_dict({"qw.W":weights[f'layers.{_}.attn.q_proj.weight'],
+                          "kw.W":weights[f'layers.{_}.attn.k_proj.weight'],
+                          "vw.W":weights[f'layers.{_}.attn.v_proj.weight'],
+                          "ow.W":weights[f'layers.{_}.attn.output_proj.weight']})
+        translm.layers[_].norm1.load_state_dict({"G":weights[f'layers.{_}.ln1.weight']})
+        translm.layers[_].norm2.load_state_dict({"G":weights[f'layers.{_}.ln2.weight']})
+        translm.layers[_].swiglu.load_state_dict({"W1.W":weights[f'layers.{_}.ffn.w1.weight'],
+                                                  "W2.W":weights[f'layers.{_}.ffn.w2.weight'],
+                                                  "W3.W":weights[f'layers.{_}.ffn.w3.weight']})
+    translm.ln_final.load_state_dict({"G":weights['ln_final.weight']})
+    translm.lm_head.load_state_dict({"W":weights['lm_head.weight']})
+    return translm.forward(in_indices)
     """Given the weights of a Transformer language model and input indices,
     return the output of running a forward pass on the input indices.
 
@@ -383,7 +398,6 @@ def run_transformer_lm(
         Float[Tensor, "batch_size sequence_length vocab_size"]: Tensor with the predicted unnormalized
         next-word distribution for each token.
     """
-    raise NotImplementedError
 
 
 def run_rmsnorm(
